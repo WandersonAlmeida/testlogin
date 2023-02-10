@@ -1,36 +1,52 @@
 <!DOCTYPE html>
-<html lang="pt-Br">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>teste login</title>
-    
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
-    <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script>
+
+    <title>Document</title>
+
     <script>
-        function handleCredentialResponse(response) {
-    const data = jwt_decode(response.credential)
-    console.log(data)
+      function decodeJwtResponse(token) {
+        let base64Url = token.split(".")[1];
+        let payload = atob(base64Url)
+        return JSON.parse(payload);
+      }
 
-  }
-  window.onload = function () {
-    google.accounts.id.initialize({
-      client_id:'436893900469-1pbevu678f2a7erhuejpolm0rl8veden.apps.googleusercontent.com',
-      callback: handleCredentialResponse
-    });
-    google.accounts.id.renderButton(
-      document.getElementById("buttonDiv"),
-      { theme: "outline", size: "large" }  // customization attributes
-    );
-    google.accounts.id.prompt(); // also display the One Tap dialog
-}
+      let responsePayload;
+      window.onSuccess = (response) => {
+        console.log(response.credential)
+        responsePayload = decodeJwtResponse(response.credential);
 
+        console.log("ID: " + responsePayload.sub);
+        console.log("Full Name: " + responsePayload.name);
+        console.log("Given Name: " + responsePayload.given_name);
+        console.log("Family Name: " + responsePayload.family_name);
+        console.log("Image URL: " + responsePayload.picture);
+        console.log("Email: " + responsePayload.email);
+      };
     </script>
-</head>
-<body>
-    <div id="buttonDiv"></div>
+  </head>
+  <body>
+    <div
+      id="g_id_onload"
+      data-client_id="436893900469-fbmug960l1qec4f0fn9vn1dfll392mco.apps.googleusercontent.com"
+      data-context="signin"
+      data-ux_mode="popup"
+      data-callback="onSuccess"
+      data-auto_prompt="false"
+    ></div>
 
-</body>
+    <div
+      class="g_id_signin"
+      data-type="standard"
+      data-shape="rectangular"
+      data-theme="outline"
+      data-text="signin_with."
+      data-size="large"
+      data-logo_alignment="left"
+    ></div>
+  </body>
 </html>
